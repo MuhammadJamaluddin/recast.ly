@@ -12,7 +12,7 @@ var searchYouTube = (options, callback, errorCB) => {
     },
     success: function(data) {
       const videoData = data.items;
-      callback(videoData);
+      return callback(videoData);
     },
     error: errorCB || function (error) {
       console.error('recastly: Failed to fetch videos', error);

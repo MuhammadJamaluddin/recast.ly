@@ -1,14 +1,48 @@
 import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
+import YOUTUBE_API_KEY from '../config/youtube.js';
 
 class App extends React.Component {
+
   constructor(props) {
     super(props);
     // states
     this.state = {
-      currentVideo: this.props.videos[0],
-      currentVideoList: this.props.videos
+      currentVideo: {
+        id: {
+          videoId: ''
+        },
+        snippet: {
+          title: '',
+          description: '',
+          thumbnails: {
+            default: {
+              url: ''
+            }
+          }
+        }
+      },
+      currentVideoList: []
     };
+  }
+
+  componentDidMount() {
+    var updateState = (data) => {
+      console.log(this);
+      this.setState({
+        currentVideo: data[0],
+        currentVideoList: data
+      });
+    };
+
+    var initialResults = this.props.searchYouTube({
+      max: 5,
+      query: 'funny cats',
+      key: YOUTUBE_API_KEY
+    }, updateState);
+
+    console.log(initialResults);
+
   }
 
   handleDisplayVideo(video) {
@@ -42,3 +76,20 @@ class App extends React.Component {
 // In the ES6 spec, files are "modules" and do not share a top-level scope
 // `var` declarations will only exist globally where explicitly defined
 export default App;
+
+/*
+{
+  id: {
+    videoId: ''
+  },
+  snippet: {
+    title: '',
+    description: '',
+    thumbnails: {
+      default: {
+        url: ''
+      }
+    }
+  }
+}
+*/
