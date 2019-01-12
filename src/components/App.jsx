@@ -1,12 +1,11 @@
 import VideoList from './VideoList.js';
 import VideoPlayer from './VideoPlayer.js';
 import YOUTUBE_API_KEY from '../config/youtube.js';
+import Search from './Search.js';
 
 class App extends React.Component {
-
   constructor(props) {
     super(props);
-    // states
     this.state = {
       currentVideo: {
         id: {
@@ -26,30 +25,30 @@ class App extends React.Component {
     };
   }
 
-  componentDidMount() {
+  componentDidMount(query = 'funny cats') {
     var updateState = (data) => {
-      console.log(this);
       this.setState({
         currentVideo: data[0],
         currentVideoList: data
       });
     };
 
-    var initialResults = this.props.searchYouTube({
+    this.props.searchYouTube({
       max: 5,
-      query: 'funny cats',
+      query: query,
       key: YOUTUBE_API_KEY
     }, updateState);
-
-    console.log(initialResults);
-
   }
 
   handleDisplayVideo(video) {
-    console.log(this);
     this.setState({
       currentVideo: video
     });
+  }
+
+  handleSearch(query) {
+    var debouncedSearch = _.debounce(this.componentDidMount.bind(this), 500, {leading: true, trailing: true});
+    debouncedSearch(query);
   }
 
   render() {
@@ -57,7 +56,7 @@ class App extends React.Component {
       <div>
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
-            <div><h5><em>search</em> view goes here</h5></div>
+            <Search search={this.handleSearch.bind(this)}/>
           </div>
         </nav>
         <div className="row">
@@ -65,7 +64,7 @@ class App extends React.Component {
             <VideoPlayer video={this.state.currentVideo} />
           </div>
           <div className="col-md-5">
-            <VideoList videos={this.state.currentVideoList} onClickDisplayVideo={this.handleDisplayVideo.bind(this)} />
+            <VideoList videos={this.state.currentVideoList} DisplayVideoOnClick={this.handleDisplayVideo.bind(this)} />
           </div>
         </div>
       </div>
