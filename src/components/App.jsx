@@ -6,6 +6,7 @@ import Search from './Search.js';
 class App extends React.Component {
   constructor(props) {
     super(props);
+
     this.state = {
       currentVideo: {
         id: {
@@ -23,9 +24,12 @@ class App extends React.Component {
       },
       currentVideoList: []
     };
+
+    this.throttledSearch = _.throttle(this.componentDidMount.bind(this), 500);
   }
 
   componentDidMount(query = 'funny cats') {
+    console.log('sent');
     var updateState = (data) => {
       this.setState({
         currentVideo: data[0],
@@ -46,17 +50,12 @@ class App extends React.Component {
     });
   }
 
-  handleSearch(query) {
-    var debouncedSearch = _.debounce(this.componentDidMount.bind(this), 500, {leading: true, trailing: true});
-    debouncedSearch(query);
-  }
-
   render() {
     return (
       <div>
         <nav className="navbar">
           <div className="col-md-6 offset-md-3">
-            <Search search={this.handleSearch.bind(this)}/>
+            <Search search={this.throttledSearch}/>
           </div>
         </nav>
         <div className="row">
